@@ -1,0 +1,24 @@
+image:
+  repository: influxdb
+  #tag: 1.8
+
+persistence:
+  enabled: true
+  size: 3Gi
+  storageClass: "local-path"
+
+service:
+  type: NodePort
+  port: 8086
+
+admin:
+  enabled: true
+  user: admin
+  password: admin_password
+
+config:
+  meta:
+    retention-autocreate: true
+
+nodeSelector:
+  kubernetes.io/hostname: pi4-master

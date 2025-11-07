@@ -1,0 +1,34 @@
+alertmanager:
+  enabled: false
+
+pushgateway:
+  enabled: false
+
+server:
+  persistentVolume:
+    enabled: true
+    size: 3Gi
+    storageClass: sc-openebs
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 250m
+    limits:
+      memory: 2Gi
+      cpu: 500m
+  global:
+    scrape_interval: 60s
+    scrape_timeout: 10s
+
+  nodeSelector:
+    #location: pi-zw2
+    kubernetes.io/hostname: pi4-8g-worker1
+
+  service:
+    type: NodePort
+    nodePort: 30090
+
+  extraScrapeConfigs: |
+    - job_name: 'mongodb'
+      static_configs:
+        - targets: ['mongodb-metrics.mongo.svc.cluster.local:9216']

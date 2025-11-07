@@ -1,0 +1,30 @@
+adminUser: admin
+adminPassword: admin
+
+service:
+  enabled: true
+  type: NodePort
+  port: 80
+  targetPort: 3000
+  nodePort: 30080
+
+persistence:
+  enabled: true
+  storageClassName: "local-path"
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+
+resources:
+  requests:
+    memory: 1Gi
+    cpu: 500m
+  limits:
+    memory: 2Gi
+    cpu: 1
+
+dashboardProviders: {}
+dashboards: {}
+
+nodeSelector:
+  kubernetes.io/hostname: pi4-master

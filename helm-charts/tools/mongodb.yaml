@@ -1,0 +1,62 @@
+replicaSetConfigurationSettings:
+  enabled: false
+
+architecture: standalone
+
+#auth:
+#  #enabled: false
+#  enabled: true
+#  rootUser: root
+#  rootPassword: "admin"
+#  usernames: []
+#  passwords: []
+#  databases: []
+
+image:
+  repository: arm64v8/mongo
+  tag: 4.4.18
+
+global:
+  security:
+    allowInsecureImages: true
+
+persistence:
+  enabled: true
+  storageClass: sc-openebs
+  size: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  mountPath: /data/db
+
+service:
+  type: NodePort
+  ports:
+    mongodb: 27017
+  nodePorts:
+    mongodb: 30017
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false
+
+readinessProbe:
+  enabled: false
+livenessProbe:
+  enabled: false
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 3Gi
+    cpu: 1
+
+nodeSelector:
+  kubernetes.io/hostname: pi4-8g-worker1
+
+tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
