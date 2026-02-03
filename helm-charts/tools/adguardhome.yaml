@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: adblock   # Namespace for AdGuard Home
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: adguardhome-pvc
+  namespace: adblock
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi   # Storage for AdGuard Home config and work data
+  storageClassName: local-path
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguardhome
+  namespace: adblock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adguardhome
+  template:
+    metadata:
+      labels:
+        app: adguardhome
+    spec:
+      hostNetwork: true
+      dnsPolicy: Default
+      nodeSelector:
+        kubernetes.io/hostname: pi4-master
+      containers:
+        - name: adguardhome
+          image: adguard/adguardhome:latest
+          ports:
+            - containerPort: 53
+              hostPort: 53
+              protocol: UDP
+            - containerPort: 53
+              hostPort: 53
+              protocol: TCP
+            - containerPort: 3000
+              hostPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - name: adguardhome-data
+              mountPath: /opt/adguardhome/work
+      volumes:
+        - name: adguardhome-data
+          persistentVolumeClaim:
+            claimName: adguardhome-pvc

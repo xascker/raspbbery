@@ -44,3 +44,8 @@ db.hello();
 use testdb
 db.testcollection.insertOne({ name: "test", value: 123 })
 db.testcollection.find()
+
+
+===============================================================================
+AdGuardHome
+kubectl apply -f adguardhome.yaml

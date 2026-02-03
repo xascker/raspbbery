@@ -39,3 +39,7 @@ cat /etc/rancher/k3s/k3s.yaml
 # Ubuntu 22
 systemctl disable systemd-networkd-wait-online.service
 systemctl mask systemd-networkd-wait-online.service
+
+vim /etc/netplan/50-cloud-init.yaml
+
+export KUBECONFIG=~/.kube/k3s.config
