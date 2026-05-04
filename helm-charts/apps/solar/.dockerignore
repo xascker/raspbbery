@@ -1,0 +1,7 @@
+cronjob.yaml
+mongo-secret.yaml
+ReadMe.txt
+*.md
+.git
+__pycache__
+*.pyc
