@@ -21,12 +21,14 @@ docker push YOUR_USERNAME/sun-collector:0.1
 
 docker images
 docker rmi IMAGE_ID
-
+------------
 
 
 kubectl create namespace astro
-kubectl apply -f mongo-secret.yaml
+kubectl apply -f solar-properties.yaml
 kubectl apply -f cronjob.yaml
+
+
 
 -- check --
 kubectl get cronjob -n astro

@@ -2,13 +2,23 @@ import requests
 from datetime import datetime, timezone
 from pymongo import MongoClient
 import os
+import json
 
 # MONGO_URL = os.getenv(
 #     "MONGO_URL",
 #     "mongodb://root:admin@192.168.1.151:30017/admin"
 # )
 
-MONGO_URL = os.environ["MONGO_URL"]
+CONFIG = json.loads(os.environ["APP_CONFIG"])
+
+MONGO_URL = CONFIG["mongo_url"]
+
+LAT = CONFIG["lat"]
+LNG = CONFIG["lng"]
+
+SUN_URL = CONFIG["sun_url"]
+SOLAR_FL_URL = CONFIG["solar_fl_url"]
+KP_URL = CONFIG["kp_url"]
 
 client = MongoClient(MONGO_URL)
 
@@ -17,15 +27,21 @@ col = db.solar
 
 
 def get_sun():
-    url = "https://api.sunrise-sunset.org/json?lat=53.5461&lng=-113.4938&formatted=0"
-    r = requests.get(url, timeout=10)
+    r = requests.get(
+        SUN_URL,
+        params={
+            "lat": LAT,
+            "lng": LNG,
+            "formatted": 0
+        },
+        timeout=10
+    )
     r.raise_for_status()
     return r.json()["results"]
 
 
 def get_solar_flares_probabilities():
-    url = "https://services.swpc.noaa.gov/json/solar_probabilities.json"
-    r = requests.get(url, timeout=10)
+    r = requests.get(SOLAR_FL_URL, timeout=10)
     r.raise_for_status()
     data = r.json()
 
@@ -39,8 +55,7 @@ def get_solar_flares_probabilities():
 
 
 def get_kp_forecast():
-    url = "https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt"
-    r = requests.get(url, timeout=10)
+    r = requests.get(KP_URL, timeout=10)
     r.raise_for_status()
 
     lines = r.text.splitlines()

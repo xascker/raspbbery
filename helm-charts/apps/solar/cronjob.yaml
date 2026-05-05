@@ -18,15 +18,15 @@ spec:
 
           containers:
             - name: sun-collector
-              image: xascker/sun-collector:0.1
+              image: xascker/sun-collector:0.11
               imagePullPolicy: IfNotPresent
 
               env:
-                - name: MONGO_URL
+                - name: APP_CONFIG
                   valueFrom:
                     secretKeyRef:
-                      name: mongo-secret
-                      key: MONGO_URL
+                      name: solar-properties
+                      key: APP_CONFIG
 
               resources:
                 requests:
