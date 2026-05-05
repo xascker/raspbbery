@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: moon-properties
+  namespace: astro
+type: Opaque
+
+stringData:
+  APP_CONFIG: |
+    {
+      "mongo_url": "mongodb://root:admin@mongodb.mongo.svc.cluster.local:27017/admin",
+      "lat": "53.5461",
+      "lng": "-113.4938"
+    }
