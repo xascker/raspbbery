@@ -4,11 +4,6 @@ from pymongo import MongoClient
 import os
 import json
 
-# MONGO_URL = os.getenv(
-#     "MONGO_URL",
-#     "mongodb://root:admin@192.168.1.151:30017/admin"
-# )
-
 CONFIG = json.loads(os.environ["APP_CONFIG"])
 
 MONGO_URL = CONFIG["mongo_url"]
@@ -45,13 +40,15 @@ def get_solar_flares_probabilities():
     r.raise_for_status()
     data = r.json()
 
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if not data:
+        return None
 
-    for row in data:
-        if row["date"].startswith(today):
-            return row
+    sorted_data = sorted(
+        data,
+        key=lambda x: datetime.fromisoformat(x["date"])
+    )
 
-    return None
+    return sorted_data[-1]
 
 
 def get_kp_forecast():
