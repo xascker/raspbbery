@@ -1,11 +1,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: sun-collector
+  name: planets-collector
   namespace: astro
 
 spec:
-  schedule: "0 1 * * *"   # 01:00 MST
+  schedule: "0 6 * * *"   # 06:00 MST
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 3
@@ -17,15 +17,15 @@ spec:
           restartPolicy: Never
 
           containers:
-            - name: sun-collector
-              image: xascker/sun-collector:0.15
+            - name: planets-collector
+              image: xascker/planets-collector:0.11
               imagePullPolicy: IfNotPresent
 
               env:
                 - name: APP_CONFIG
                   valueFrom:
                     secretKeyRef:
-                      name: solar-properties
+                      name: planets-properties
                       key: APP_CONFIG
 
               resources:

@@ -1,0 +1,7 @@
+cronjob.yaml
+planets-properties.yaml
+ReadMe.txt
+*.md
+.git
+__pycache__
+*.pyc

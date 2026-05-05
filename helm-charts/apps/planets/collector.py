@@ -2,11 +2,19 @@ from skyfield.api import load, Topos
 from skyfield import almanac
 from datetime import datetime, timezone
 from pymongo import MongoClient
-from zoneinfo import ZoneInfo
 import os
 import json
+from zoneinfo import ZoneInfo
 
 # ---------------- CONFIG ----------------
+
+# DEFAULT_CONFIG = {
+#     "mongo_url": "mongodb://root:admin@192.168.1.151:30017/admin",
+#     "lat": 53.5461,
+#     "lng": -113.4938,
+#     "local_tz": "America/Edmonton"
+# }
+#CONFIG = json.loads(os.getenv("APP_CONFIG", "null")) or DEFAULT_CONFIG
 
 CONFIG = json.loads(os.environ["APP_CONFIG"])
 
@@ -20,7 +28,7 @@ LOCAL_TZ = ZoneInfo(CONFIG["local_tz"])
 
 client = MongoClient(MONGO_URL)
 db = client.space
-col = db.moon
+col = db.planets
 
 # ---------------- SKYFIELD ----------------
 
@@ -28,8 +36,11 @@ ts = load.timescale()
 eph = load("de421.bsp")
 
 earth = eph["earth"]
-moon = eph["moon"]
-sun = eph["sun"]
+
+venus = eph["venus"]
+mars = eph["mars"]
+jupiter = eph["jupiter barycenter"]
+saturn = eph["saturn barycenter"]
 
 topos = Topos(latitude_degrees=LAT, longitude_degrees=LNG)
 
@@ -42,48 +53,21 @@ def to_local(dt):
     return dt.astimezone(LOCAL_TZ)
 
 
-def get_moon_state(t):
-    astrometric = (earth + topos).at(t).observe(moon)
+def get_body_state(body, t):
+    astrometric = (earth + topos).at(t).observe(body)
     alt, az, dist = astrometric.apparent().altaz()
-    return astrometric, alt.degrees, az.degrees, dist.km
-
-
-def get_phase_angle(t):
-    moon_ast = (earth + topos).at(t).observe(moon)
-    sun_ast = (earth + topos).at(t).observe(sun)
-    return sun_ast.separation_from(moon_ast).degrees
-
-
-# ---------------- PHASE ----------------
-
-def get_moon_phase(angle_deg):
-    if angle_deg < 10:
-        return "New Moon"
-    elif angle_deg < 80:
-        return "Waxing Crescent"
-    elif angle_deg < 100:
-        return "First Quarter"
-    elif angle_deg < 160:
-        return "Waxing Gibbous"
-    elif angle_deg < 200:
-        return "Full Moon"
-    elif angle_deg < 260:
-        return "Waning Gibbous"
-    elif angle_deg < 280:
-        return "Last Quarter"
-    else:
-        return "Waning Crescent"
+    return alt.degrees, az.degrees, dist.km
 
 
 # ---------------- RISE / SET ----------------
 
-def find_moon_rise_set():
+def find_rise_set(body):
     now = datetime.now(timezone.utc)
 
     t0 = ts.utc(now.year, now.month, now.day - 1)
     t1 = ts.utc(now.year, now.month, now.day + 2)
 
-    f = almanac.risings_and_settings(eph, moon, topos)
+    f = almanac.risings_and_settings(eph, body, topos)
     times, events = almanac.find_discrete(t0, t1, f)
 
     rise = None
@@ -103,74 +87,72 @@ def find_moon_rise_set():
 
 # ---------------- TRANSIT ----------------
 
-def find_moon_transit():
+def find_transit(body):
     now = datetime.now(timezone.utc)
 
     t0 = ts.utc(now.year, now.month, now.day, 0, 0, 0)
     t1 = ts.utc(now.year, now.month, now.day + 1, 0, 0, 0)
 
-    f = almanac.meridian_transits(eph, moon, topos)
+    f = almanac.meridian_transits(eph, body, topos)
     times, events = almanac.find_discrete(t0, t1, f)
 
     for t, event in zip(times, events):
         if event == 1:
-            astrometric = (earth + topos).at(t).observe(moon)
-            alt, _, _ = astrometric.apparent().altaz()
-
+            alt, _, _ = get_body_state(body, t)
             dt = t.utc_datetime().replace(tzinfo=timezone.utc)
-            return dt, alt.degrees
+            return dt, alt
 
     return None, None
 
 
-# ---------------- MOON DATA ----------------
+# ---------------- PLANET DATA ----------------
 
-def get_moon_data():
+def get_planet_data(name, body):
     t = ts.now()
 
-    _, alt, az, dist = get_moon_state(t)
-
-    rise, set_ = find_moon_rise_set()
-    transit, max_alt = find_moon_transit()
-
-    phase_angle = get_phase_angle(t)
-    phase = get_moon_phase(phase_angle)
+    alt, az, dist = get_body_state(body, t)
+    rise, set_ = find_rise_set(body)
+    transit, max_alt = find_transit(body)
 
     return {
-        "name": "moon",
+        "name": name,
 
-        # UTC
         "rise_utc": rise.isoformat() if rise else None,
         "set_utc": set_.isoformat() if set_ else None,
         "transit_utc": transit.isoformat() if transit else None,
 
-        # LOCAL
         "rise_local": to_local(rise).isoformat() if rise else None,
         "set_local": to_local(set_).isoformat() if set_ else None,
         "transit_local": to_local(transit).isoformat() if transit else None,
 
-        # current state
         "altitude_now": float(alt),
         "azimuth_now": float(az),
         "distance_km": float(dist),
 
-        # max altitude
-        "max_altitude": float(max_alt) if max_alt else None,
-
-        # phase
-        "phase_angle": float(phase_angle),
-        "phase": phase
+        "max_altitude": float(max_alt) if max_alt else None
     }
 
 
 # ---------------- MAIN ----------------
 
 def main():
-    print("collecting moon data (UTC Skyfield)...")
+    print("collecting planet data (UTC Skyfield)...")
+
+    planets = {
+        "venus": venus,
+        "mars": mars,
+        "jupiter": jupiter,
+        "saturn": saturn
+    }
+
+    planet_data = {}
+
+    for name, body in planets.items():
+        planet_data[name] = get_planet_data(name, body)
 
     data = {
         "createdAt": datetime.now(timezone.utc),
-        "moon": get_moon_data()
+        "planets": planet_data
     }
 
     result = col.insert_one(data)

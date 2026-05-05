@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: moon-properties
+  name: planets-properties
   namespace: astro
 type: Opaque
 
