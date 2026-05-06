@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: tg-properties
-  namespace: tg
+  namespace: astro
 type: Opaque
 
 stringData:
