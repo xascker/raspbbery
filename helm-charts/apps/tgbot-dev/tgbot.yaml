@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tgbot
+  namespace: tg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tgbot
+  template:
+    metadata:
+      labels:
+        app: tgbot
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi4-master
+
+      containers:
+        - name: tgbot
+          image: xascker/tgbot-dev:0.1
+          workingDir: /app
+
+          command:
+            - watchmedo
+            - auto-restart
+            - --recursive
+            - --patterns=*.py
+            - --
+            - python
+            - main.py
+
+          env:
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tg-properties
+                  key: BOT_TOKEN
+
+            - name: APP_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: tg-properties
+                  key: APP_CONFIG
+
+          volumeMounts:
+            - name: bot-code
+              mountPath: /app
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+
+      volumes:
+        - name: bot-code
+          hostPath:
+            path: /opt/skyops/tgbot
+            type: Directory

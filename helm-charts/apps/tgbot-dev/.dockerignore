@@ -1,0 +1,6 @@
+tg-properties.yaml
+ReadMe.txt
+*.md
+.git
+__pycache__
+*.pyc

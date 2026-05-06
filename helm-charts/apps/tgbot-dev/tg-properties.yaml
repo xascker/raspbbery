@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tg-properties
+  namespace: tg
+type: Opaque
+
+stringData:
+  BOT_TOKEN: ""
+  APP_CONFIG: |
+    {
+      "log_level": "WARNING"
+    }
