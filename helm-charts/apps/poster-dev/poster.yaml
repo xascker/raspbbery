@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poster
+  namespace: astro
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: poster
+
+  template:
+    metadata:
+      labels:
+        app: poster
+
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi4-8g-worker1
+
+      containers:
+        - name: poster
+          image: xascker/poster-dev:0.12
+          workingDir: /app
+
+          command:
+            - python
+            - main.py
+
+          env:
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: poster-properties
+                  key: BOT_TOKEN
+
+            - name: APP_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: poster-properties
+                  key: APP_CONFIG
+
+          volumeMounts:
+            - name: poster-code
+              mountPath: /app
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
+      volumes:
+        - name: poster-code
+          hostPath:
+            path: /opt/skyops/poster
+            type: Directory
