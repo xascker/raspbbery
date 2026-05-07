@@ -1,5 +1,7 @@
 from storage import db
 from events.sun import build_sun_events
+from events.moon import build_moon_events
+from events.planets import build_planet_events
 from utils.time import utc_day_start_from_local, utc_day_end_from_local, ensure_aware
 from datetime import timezone
 
@@ -25,4 +27,19 @@ def get_events():
     if not (start <= doc_time <= end):
         return []
 
-    return build_sun_events(doc)
+    events = []
+
+    # SUN
+    events.extend(build_sun_events(doc))
+
+    # MOON
+    moon_doc = db.moon.find_one(sort=[("createdAt", -1)])
+    if moon_doc:
+        events.extend(build_moon_events(moon_doc))
+
+    # PLANETS
+    planet_doc = db.planets.find_one(sort=[("createdAt", -1)])
+    if planet_doc:
+        events.extend(build_planet_events(planet_doc))
+
+    return events

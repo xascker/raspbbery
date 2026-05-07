@@ -8,7 +8,6 @@ def get_hello_events():
 
     now = datetime.utcnow()
 
-    # раз в 1 минуту (для теста)
     if _last_run and (now - _last_run).seconds < 60:
         return []
 
