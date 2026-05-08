@@ -7,7 +7,7 @@ from telegram import Bot
 
 from engine import get_events
 from storage import already_sent, save_event, cleanup_old
-from utils.time import now_local
+from utils.time import now_local, to_local
 
 # ----------------------------
 # CONFIG
@@ -68,8 +68,12 @@ async def main():
 
             for event in events:
                 eid = event["event_id"]
+                event_time = event["time"]
 
                 if already_sent(eid):
+                    continue
+
+                if now_local() < to_local(event_time):
                     continue
 
                 await send(event)

@@ -39,7 +39,10 @@ def get_events():
 
     # PLANETS
     planet_doc = db.planets.find_one(sort=[("createdAt", -1)])
+    sun_doc = db.solar.find_one(sort=[("createdAt", -1)])
     if planet_doc:
-        events.extend(build_planet_events(planet_doc))
+        events.extend(
+            build_planet_events(planet_doc, sun_doc)
+        )
 
     return events

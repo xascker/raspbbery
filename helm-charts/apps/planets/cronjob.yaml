@@ -5,7 +5,7 @@ metadata:
   namespace: astro
 
 spec:
-  schedule: "0 6 * * *"   # 06:00 MST
+  schedule: "5 1 * * *"   # 06:00 MST
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 3
