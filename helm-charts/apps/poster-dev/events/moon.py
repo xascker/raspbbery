@@ -39,6 +39,7 @@ def build_moon_events(doc):
             "type": "moon_rise_pre",
             "time": to_utc(rise - timedelta(minutes=5)),
             "message": (
+                f"<pre>🌙️</pre>\n"
                 f"<code>🌅 Moon rise today</code> - {to_local(rise).strftime('%H:%M')}\n"
                 f"<code>🌇 Set:</code> {to_local(set_).strftime('%H:%M') if set_ else 'N/A'}\n"
                 f"<code>⬆️ Transit:</code> {to_local(transit).strftime('%H:%M') if transit else 'N/A'}\n"
@@ -56,6 +57,7 @@ def build_moon_events(doc):
             "type": "moon_transit_pre",
             "time": to_utc(transit - timedelta(minutes=30)),
             "message": (
+                f"<pre>🌙️</pre>\n"
                 f"<code>{phase_icon} Moon transit event</code> - {to_local(transit).strftime('%H:%M') if transit else 'N/A'}"
             )
         })

@@ -97,7 +97,7 @@ def build_planet_events(doc, sun_doc=None):
             "type": "planet_window",
             "time": event_time,
             "message": (
-                f"{icon} {name.title()} window\n\n"
+                f"<pre>{icon} {name.title()} window</pre>\n"
                 f"🌅 Rise: {format_astro(rise, now_local)}\n"
                 f"🌇 Set: {format_astro(set_, now_local)}\n"
                 f"⬆️ Transit: {format_astro(transit, now_local)}\n"

@@ -21,6 +21,7 @@ def build_sun_events(doc):
             "type": "sunrise_pre",
             "time": to_utc(sunrise - timedelta(minutes=45)),
             "message": (
+                f"<pre>☀️</pre>\n"
                 f"<code>🌄 Sunrise today</code> - {to_local(sunrise).strftime('%H:%M')}\n"
                 f"<code>🌇 Sunset</code>: {to_local(sunset).strftime('%H:%M') if sunset else 'N/A'}\n"
                 f"<code>🧲 Geomag:</code> "
@@ -42,6 +43,7 @@ def build_sun_events(doc):
             "type": "sunset_pre",
             "time": to_utc(sunset - timedelta(minutes=30)),
             "message": (
+                f"<pre>☀️</pre>\n"
                 f"<code>🌇 Sunset event</code> - {to_local(sunset).strftime('%H:%M') if sunset else 'N/A'}"
             )
         })
