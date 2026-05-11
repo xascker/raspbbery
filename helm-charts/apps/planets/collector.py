@@ -65,7 +65,7 @@ def find_rise_set(body):
     now = datetime.now(timezone.utc)
 
     t0 = ts.utc(now.year, now.month, now.day - 1)
-    t1 = ts.utc(now.year, now.month, now.day + 2)
+    t1 = ts.utc(now.year, now.month, now.day + 3)
 
     f = almanac.risings_and_settings(eph, body, topos)
     times, events = almanac.find_discrete(t0, t1, f)
@@ -76,11 +76,14 @@ def find_rise_set(body):
     for t, event in zip(times, events):
         dt = t.utc_datetime().replace(tzinfo=timezone.utc)
 
-        if dt.date() == now.date():
-            if event == 1 and rise is None:
-                rise = dt
-            elif event == 0 and set_ is None:
-                set_ = dt
+        # first rise after now
+        if event == 1 and dt > now and rise is None:
+            rise = dt
+
+        # first set after rise
+        elif event == 0 and rise and dt > rise:
+            set_ = dt
+            break
 
     return rise, set_
 

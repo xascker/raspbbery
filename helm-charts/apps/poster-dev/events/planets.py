@@ -1,14 +1,25 @@
 from datetime import datetime, timezone, timedelta
 
-from utils.time import parse_dt, to_local
+from utils.time import parse_dt, to_local, format_astro
 from utils.trace import trace_planet
 
 import logging
 
 
+PLANET_ICONS = {
+    "venus": "⚪️",
+    "mars": "🔴️",
+    "jupiter": "🟠",
+    "saturn": "🪐",
+    "mercury": "☿",
+    "uranus": "⛢",
+    "neptune": "♆",
+}
+
+
 def build_planet_events(doc, sun_doc=None):
     events = []
-
+    now_local = to_local(datetime.now(timezone.utc))
     planets = doc.get("planets", {})
 
     sun_set = None
@@ -49,7 +60,7 @@ def build_planet_events(doc, sun_doc=None):
 
         # visibility rule
         if sun_set:
-            if set_ < sun_set or set_ > sun_set + timedelta(hours=1):
+            if set_ <= sun_set + timedelta(hours=1):
                 trace_planet(
                     name=name,
                     sun_set=sun_set,
@@ -57,9 +68,7 @@ def build_planet_events(doc, sun_doc=None):
                     skipped=True
                 )
                 continue
-
             event_time = sun_set - timedelta(minutes=20)
-
         else:
             event_time = set_ - timedelta(minutes=20)
 
@@ -81,15 +90,17 @@ def build_planet_events(doc, sun_doc=None):
             event_time=event_time
         )
 
+        icon = PLANET_ICONS.get(name.lower(), "🪐")
+
         events.append({
             "event_id": f"{doc['_id']}-{name}-window",
             "type": "planet_window",
             "time": event_time,
             "message": (
-                f"🪐 {name.title()} window\n\n"
-                f"🌅 Rise: {to_local(rise).strftime('%H:%M') if rise else 'N/A'}\n"
-                f"🌇 Set: {to_local(set_).strftime('%H:%M')}\n"
-                f"⬆️ Transit: {to_local(transit).strftime('%H:%M') if transit else 'N/A'}\n"
+                f"{icon} {name.title()} window\n\n"
+                f"🌅 Rise: {format_astro(rise, now_local)}\n"
+                f"🌇 Set: {format_astro(set_, now_local)}\n"
+                f"⬆️ Transit: {format_astro(transit, now_local)}\n"
                 f"📏 Max alt: {round(p.get('max_altitude', 0), 1)}°"
             )
         })

@@ -12,6 +12,7 @@ db.events.find().pretty()
 db.events.deleteOne({ _id: ObjectId("69f8ff117162f08c5160ec30") })
 db.events.deleteMany({})
 db.events.deleteMany({type: "planet_window"})
+db.events.deleteMany({type: { $regex: "^moon" }})
 
 -- BUILD --
 docker build -t poster-dev:0.1 .

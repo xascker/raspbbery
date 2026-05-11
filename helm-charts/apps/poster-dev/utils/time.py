@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 import os
 import json
@@ -58,3 +58,24 @@ def utc_day_start_from_local():
 def utc_day_end_from_local():
     local = now_local().replace(hour=23, minute=59, second=59, microsecond=999999)
     return local.astimezone(timezone.utc)
+
+
+def format_astro(dt, now_local):
+    if not dt:
+        return "N/A"
+
+    dt_local = to_local(dt)
+
+    today = now_local.date()
+    tomorrow = today + timedelta(days=1)
+
+    dt_date = dt_local.date()
+
+    if dt_date == today:
+        prefix = "today"
+    elif dt_date == tomorrow:
+        prefix = "tomorrow"
+    else:
+        prefix = dt_local.strftime("%d.%m")
+
+    return f"{prefix} {dt_local.strftime('%H:%M')}"
