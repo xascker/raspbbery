@@ -2,6 +2,9 @@
 kubectl apply -f ollama.yaml
 kubectl delete -f ollama.yaml
 
+kubectl apply -f ollama-nonGPU.yaml
+kubectl delete -f ollama-nonGPU.yaml
+
 =====================================================
 kubectl exec -it -n ai deploy/ollama -- bash
 
@@ -37,4 +40,6 @@ netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=11434 conn
 netsh interface portproxy show all
 ====================================================
 
- curl -v --connect-timeout 5 http://192.168.1.227:11434/api/tags
+curl -v --connect-timeout 5 http://192.168.1.227:11434/api/tags
+
+kubectl exec -it deployment/open-webui -- curl -s http://ollama:11434/api/tags
