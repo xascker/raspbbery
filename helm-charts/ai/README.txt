@@ -35,3 +35,5 @@ netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=11434
 netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=11434 connectaddress=172.21.141.15 connectport=31434
 
 ====================================================
+
+ curl -v --connect-timeout 5 http://192.168.1.227:11434/api/tags
