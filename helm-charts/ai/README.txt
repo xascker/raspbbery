@@ -34,6 +34,7 @@ for /f "tokens=1" %i in ('wsl -d Ubuntu-22.04 -- hostname -I') do for %p in (22 
 netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=11434
 netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=11434 connectaddress=172.21.141.15 connectport=31434
 
+netsh interface portproxy show all
 ====================================================
 
  curl -v --connect-timeout 5 http://192.168.1.227:11434/api/tags
