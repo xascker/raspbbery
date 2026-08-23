@@ -30,6 +30,9 @@ curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.250:6443 K3S_TOKEN=K10d
 kubectl label node pi-zw2-worker1 node-role.kubernetes.io/worker=worker
 kubectl label node pi-zw2-worker1 location=pi-zw2
 
+kubectl label node tuz node-role.kubernetes.io/worker=worker
+kubectl label node tuz accelerator=nvidia-gpu
+
 cat /etc/rancher/k3s/k3s.yaml
 
 /usr/local/bin/k3s-uninstall.sh

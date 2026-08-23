@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nvidia-device-plugin-daemonset
+  namespace: kube-system
+
+spec:
+  selector:
+    matchLabels:
+      name: nvidia-device-plugin-ds
+
+  updateStrategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        name: nvidia-device-plugin-ds
+
+    spec:
+      runtimeClassName: nvidia
+
+      nodeSelector:
+        accelerator: nvidia-gpu
+
+      tolerations:
+        - operator: Exists
+
+      priorityClassName: system-node-critical
+
+      containers:
+        - name: nvidia-device-plugin-ctr
+          image: nvcr.io/nvidia/k8s-device-plugin:v0.15.1
+
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+
+            - name: NVIDIA_DRIVER_ROOT
+              value: /usr/lib/wsl
+
+            - name: DEVICE_LIST_STRATEGY
+              value: envvar
+
+            - name: LD_LIBRARY_PATH
+              value: /usr/lib/wsl/lib
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
+
+            - name: wsl
+              mountPath: /usr/lib/wsl
+              readOnly: true
+
+            - name: dxg
+              mountPath: /dev/dxg
+
+      volumes:
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+
+        - name: wsl
+          hostPath:
+            path: /usr/lib/wsl
+
+        - name: dxg
+          hostPath:
+            path: /dev/dxg
