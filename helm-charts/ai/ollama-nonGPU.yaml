@@ -27,7 +27,8 @@ spec:
               cpu: "1"
               memory: "2Gi"
             limits:
-              cpu: "2"
+              cpu: "3"
+              memory: "7Gi"
 
           volumeMounts:
             - name: ollama-data

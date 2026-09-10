@@ -26,7 +26,7 @@ docker rmi IMAGE_ID
 
 kubectl create namespace astro
 kubectl apply -f planets-properties.yaml
-kubectl apply -f cronjob.yaml
+kubectl apply -f cronjob.yaml <<<< run this to start again
 kubectl delete -f cronjob.yaml
 
 

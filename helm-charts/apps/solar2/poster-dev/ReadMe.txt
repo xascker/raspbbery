@@ -29,7 +29,7 @@ kubectl apply -f poster-properties.yaml
 kubectl delete -f poster-properties.yaml
 
 
-kubectl apply -f poster.yaml
+kubectl apply -f poster.yaml <<<< run this to start again
 kubectl delete -f poster.yaml
 
 

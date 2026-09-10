@@ -18,7 +18,7 @@ kubectl apply -f tg-properties.yaml
 kubectl delete -f tg-properties.yaml
 
 
-kubectl apply -f tgbot.yaml
+kubectl apply -f tgbot.yaml <<<< run this to start again
 kubectl delete -f tgbot.yaml
 
 -----------
