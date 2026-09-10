@@ -22,7 +22,7 @@ spec:
 
       containers:
         - name: poster
-          image: xascker/poster-dev:0.12
+          image: 123/poster-dev:0.12
           workingDir: /app
 
           command:

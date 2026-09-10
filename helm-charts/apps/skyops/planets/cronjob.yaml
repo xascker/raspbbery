@@ -18,7 +18,7 @@ spec:
 
           containers:
             - name: planets-collector
-              image: xascker/planets-collector:0.12
+              image: 123/planets-collector:0.12
               imagePullPolicy: IfNotPresent
 
               env:

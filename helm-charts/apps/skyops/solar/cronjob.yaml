@@ -18,7 +18,7 @@ spec:
 
           containers:
             - name: sun-collector
-              image: xascker/sun-collector:0.15
+              image: 123/sun-collector:0.15
               imagePullPolicy: IfNotPresent
 
               env:

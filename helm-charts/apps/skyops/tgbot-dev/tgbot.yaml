@@ -18,7 +18,7 @@ spec:
 
       containers:
         - name: tgbot
-          image: xascker/tgbot-dev:0.1
+          image: 132/tgbot-dev:0.1
           workingDir: /app
 
           command:
