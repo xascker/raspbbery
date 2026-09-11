@@ -19,7 +19,7 @@ spec:
 
           containers:
             - name: l649-collector
-              image: xascker/l649-collector:0.1
+              image: 123/l649-collector:0.1
               imagePullPolicy: IfNotPresent
 
               env:
