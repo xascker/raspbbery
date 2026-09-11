@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: l649-collector
+  namespace: lotto
+
+spec:
+  schedule: "0 9 * * 4,0"   # 09:00 local time, Thursday and Sunday
+  timeZone: "America/Edmonton"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+
+          containers:
+            - name: l649-collector
+              image: xascker/l649-collector:0.1
+              imagePullPolicy: IfNotPresent
+
+              env:
+                - name: APP_CONFIG
+                  valueFrom:
+                    secretKeyRef:
+                      name: l649-properties
+                      key: APP_CONFIG
+
+              resources:
+                requests:
+                  cpu: "20m"
+                  memory: "64Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "128Mi"

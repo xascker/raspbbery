@@ -1,0 +1,7 @@
+cronjob.yaml
+l649-properties.yaml
+ReadMe.txt
+*.md
+.git
+__pycache__
+*.pyc

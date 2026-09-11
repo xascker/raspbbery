@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: l649-properties
+  namespace: lotto
+type: Opaque
+
+stringData:
+  APP_CONFIG: |
+    {
+      "mongo_url": "mongodb://root:admin@mongodb.mongo.svc.cluster.local:27017/admin",
+      "olg_url": "",
+      "olg_client_id": "",
+      "olg_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
