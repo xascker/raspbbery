@@ -5,17 +5,12 @@ from datetime import date, timedelta, datetime, timezone
 import requests
 from pymongo import MongoClient
 
-# CONFIG = json.loads(os.environ["APP_CONFIG"])
-#
-# MONGO_URL = CONFIG["mongo_url"]
-# OLG_CLIENT_ID = CONFIG["olg_client_id"]
-# OLG_USER_AGENT = CONFIG["olg_user_agent"]
-# OLG_URL = CONFIG["olg_url"]
+CONFIG = json.loads(os.environ["APP_CONFIG"])
 
-MONGO_URL = "mongodb://root:admin@192.168.1.151:30017/admin"
-OLG_CLIENT_ID = "9c92a16d25b542048aa93a397093efe2"
-OLG_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-OLG_URL = "https://gateway.www.olg.ca/feeds/past-winning-numbers"
+MONGO_URL = CONFIG["mongo_url"]
+OLG_CLIENT_ID = CONFIG["olg_client_id"]
+OLG_USER_AGENT = CONFIG["olg_user_agent"]
+OLG_URL = CONFIG["olg_url"]
 
 def get_draws():
     today = date.today()
